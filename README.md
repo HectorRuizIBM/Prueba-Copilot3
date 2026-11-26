@@ -7,7 +7,7 @@ El objetivo de la investigación es distinguir lo que está definido en los arch
 ## Estado actual
 
 - Hay instrucciones generales en `.github/copilot-instructions.md`.
-- Hay ocho perfiles de agente en `.github/agents/` y nueve skills en `.github/skills/`.
+- Hay nueve perfiles de agente en `.github/agents/` y diez skills en `.github/skills/`, incluido el especialista `playwright` y la skill `pruebas-web-playwright`.
 - Los perfiles incluyen frontmatter `handoffs`, con rutas propuestas desde el orquestador a especialistas y de vuelta al orquestador.
 - `PLAN-AGENTES.md` describe la arquitectura y los experimentos pendientes.
 - `scripts/validate-agent-config.py` comprueba estructura, nombres, cantidad de agentes/skills y destinos declarados. **No** demuestra que VS Code descubra los perfiles, que un handoff funcione en una sesión ni que un hook se ejecute.
@@ -24,6 +24,35 @@ El objetivo de la investigación es distinguir lo que está definido en los arch
 - **Pregunta de prueba:** ¿el cliente seleccionado descubre y ejecuta las rutas configuradas, y puede el agente receptor devolver el control al orquestador?
 
 El agente `orquestador-web` declara handoffs a `investigador-entorno`, `frontend`, `backend` y `verificador`. Los especialistas incluyen rutas de retorno. Esto describe la configuración escrita; su funcionamiento real debe comprobarse en el cliente de Copilot elegido.
+
+### Verificación de la aplicación creada con Playwright
+
+El objetivo de la revisión es **la aplicación que frontend/backend acaban de construir en `proyectos/<slug>/`**, no Viewnext ni otra web externa.
+
+1. **Orquestador → verificador:** entrega la raíz exacta del proyecto, su plan, criterios de aceptación y permisos.
+2. **Verificador:** lee los comandos existentes, arranca los servicios con permisos vigentes y datos temporales, comprueba que responden y obtiene la URL local efectiva. Si el arranque falla, registra el bloqueo sin sustituir la aplicación por una web externa.
+3. **Verificador → playwright:** invoca al especialista mediante la herramienta `agent`, indicando URL, criterios, rutas autorizadas, navegadores disponibles y acciones permitidas. Si la delegación anidada no está disponible, ofrece el handoff **Crear y ejecutar pruebas web** o devuelve el encargo al orquestador.
+4. **Playwright:** lee el plan y la implementación, construye y ejecuta pruebas de las funcionalidades reales siguiendo [pruebas-web-playwright](.github/skills/pruebas-web-playwright/SKILL.md). Mantiene pruebas, configuración propia y artefactos dentro del proyecto.
+5. **Verificador:** contrasta las evidencias, registra criterios aprobados, fallidos o no ejecutados en `proyectos/<slug>/docs/verificacion.md` y devuelve los fallos al orquestador. Detiene únicamente los procesos que haya iniciado.
+
+#### Controles de las pruebas
+
+- **Páginas:** respuesta HTTP esperada, URL, título y contenido relevante visible.
+- **Enlaces:** nombres accesibles, destinos válidos y navegación interna representativa.
+- **Botones:** visibilidad, estado y efecto observable de las acciones permitidas.
+- **Formularios y flujos:** etiquetas, validaciones, estados de error/éxito y flujo principal. Las operaciones que modifican datos se prueban solo con permisos y datos temporales en un entorno controlado.
+- **Móvil y teclado:** adaptación, desbordamiento horizontal, foco y navegación de controles relevantes, sin declarar accesibilidad completa.
+- **Red y consola:** errores de JavaScript y recursos fallidos, distinguiendo recursos propios y terceros.
+
+Las pruebas deben ser independientes, usar selectores accesibles y esperas de Playwright, sin pausas fijas ni aserciones relajadas para ocultar defectos. El especialista devuelve comandos, códigos de salida, resultados, artefactos reales y limitaciones. No instala dependencias ni navegadores sin aprobación y no repara la implementación de la aplicación.
+
+#### Cómo solicitar la verificación en Copilot
+
+Selecciona `verificador` y sustituye `<slug>` por el proyecto recién creado:
+
+> Verifica la aplicación recién construida en proyectos/<slug>/ según su docs/plan-aplicacion.md. Arranca sus servicios con los comandos existentes y permisos vigentes, y delega en playwright las pruebas de su URL local. Autoriza pruebas y artefactos dentro de este proyecto; no instales dependencias ni uses una web externa como sustituto. Registra evidencias y bloqueos en docs/verificacion.md del proyecto.
+
+La suite `tests/example.spec.js` de la raíz para Viewnext es un experimento externo separado, **no** la ubicación ni el objetivo de las pruebas de aplicaciones nuevas. La configuración de delegación existe, pero su ejecución real en Copilot en VS Code debe comprobarse; este README no afirma que las aplicaciones hayan superado estas pruebas.
 
 ### Hooks
 
@@ -72,8 +101,8 @@ Referencias oficiales: [Hooks en VS Code](https://code.visualstudio.com/docs/age
 | Ruta | Propósito |
 |---|---|
 | `.github/copilot-instructions.md` | Reglas generales, aislamiento por proyecto, permisos y coordinación. |
-| `.github/agents/` | Orquestador, investigador, instaladores, frontend, backend y verificador. |
-| `.github/skills/` | Guías reutilizables de diseño, entorno, instalación, SQLite y verificación. |
+| `.github/agents/` | Orquestador, investigador, instaladores, frontend, backend, verificador y especialista Playwright. |
+| `.github/skills/` | Guías reutilizables de diseño, entorno, instalación, SQLite, verificación y pruebas web con Playwright. |
 | `PLAN-AGENTES.md` | Arquitectura, diferencias entre delegación y handoff, propuesta de hooks y criterios de aceptación. |
 | `scripts/validate-agent-config.py` | Validación estructural estática, sin dependencias externas. |
 | `.github/hooks/check-python.json` | Hook configurado para comprobar Python en `sessionStart`; integración pendiente de verificar en VS Code. |
@@ -95,7 +124,7 @@ Desde la raíz del repositorio, en PowerShell:
 python scripts\validate-agent-config.py
 ```
 
-La salida esperada identifica ocho agentes, nueve skills y destinos resueltos. Es una comprobación del contenido de los archivos, no una prueba de integración con Copilot.
+La salida esperada identifica nueve agentes, diez skills y destinos resueltos. Es una comprobación del contenido de los archivos, no una prueba de integración con Copilot.
 
 Para comprobar Python en Windows desde `cmd.exe`, desde la raíz del repositorio:
 
@@ -114,7 +143,8 @@ El preflight no instala herramientas, no cambia PATH y no crea entornos virtuale
 5. Verificar los casos de Python disponible y ausente en entornos controlados; comprobar por separado la compatibilidad de versión con el stack seleccionado.
 6. Si no hay soporte o el formato no es compatible, probar y documentar el preflight como alternativa explícita.
 
-7. Actualizar `PLAN-AGENTES.md` y este README con comandos, versiones, resultados y límites observados.
+7. Probar el flujo orquestador → verificador → playwright con una aplicación recién creada: comprobar arranque local, pruebas dentro de su proyecto, evidencias, retorno al verificador y comunicación de fallos al orquestador.
+8. Actualizar `PLAN-AGENTES.md` y este README con comandos, versiones, resultados y límites observados.
 
 ## Límites y seguridad
 

@@ -1,0 +1,139 @@
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="theme-color" content="#f5f6f2">
+    <meta name="description" content="Explora el Juego de la Vida de Conway: crea células y observa cómo evolucionan según sus reglas.">
+    <title>Conway — Juego de la Vida</title>
+    <link rel="stylesheet" href="styles.css">
+    <script src="life.js" defer></script>
+    <script src="app.js" defer></script>
+  </head>
+  <body>
+    <div class="page-shell">
+      <header class="site-header">
+        <a class="wordmark" href="#inicio" aria-label="Conway Lab, inicio">
+          <span class="wordmark-icon" aria-hidden="true"><i></i><i></i><i></i><i></i></span>
+          <span>conway<span class="wordmark-light">lab</span></span>
+        </a>
+        <p class="header-caption">UN UNIVERSO DE REGLAS SIMPLES</p>
+        <a class="header-link" href="#reglas">Cómo funciona <span aria-hidden="true">↓</span></a>
+      </header>
+
+      <main id="inicio">
+        <section class="intro" aria-labelledby="page-title">
+          <p class="eyebrow"><span class="eyebrow-line"></span> AUTÓMATA CELULAR · 1970</p>
+          <div class="intro-grid">
+            <div>
+              <h1 id="page-title">La vida encuentra<br>su <em>propio camino.</em></h1>
+              <p class="intro-copy">Un mundo sin jugadores, donde cada célula sigue unas pocas reglas y de ellas emerge lo inesperado.</p>
+            </div>
+            <div class="intro-aside">
+              <span class="aside-index">01 / SIMULACIÓN</span>
+              <p>Dibuja un patrón, dale al play y observa cómo cambia generación a generación.</p>
+            </div>
+          </div>
+        </section>
+
+        <section class="simulation" aria-labelledby="simulation-title">
+          <div class="simulation-heading">
+            <div>
+              <p class="eyebrow">EL TABLERO</p>
+              <h2 id="simulation-title">Un pequeño ecosistema</h2>
+            </div>
+            <div class="generation-readout" aria-label="Generación actual">
+              <span class="readout-label">GENERACIÓN</span>
+              <output id="generation-count" class="generation-number">0000</output>
+            </div>
+          </div>
+
+          <div class="control-deck">
+            <div class="primary-controls" aria-label="Controles de simulación">
+              <button id="toggle-run" class="button button-primary" type="button" aria-pressed="false">
+                <span class="play-icon" aria-hidden="true"></span>
+                <span id="run-label">Iniciar</span>
+              </button>
+              <button id="step-once" class="button button-secondary" type="button">
+                <span aria-hidden="true">＋</span> Un paso
+              </button>
+            </div>
+            <div class="secondary-controls">
+              <button id="randomize" class="button button-quiet" type="button">
+                <span aria-hidden="true">⤨</span> Aleatorio
+              </button>
+              <button id="clear-board" class="button button-quiet" type="button">
+                <span aria-hidden="true">⌫</span> Limpiar
+              </button>
+            </div>
+          </div>
+
+          <div class="board-settings">
+            <form id="size-form" class="size-form">
+              <span class="settings-label">TAMAÑO DEL TABLERO</span>
+              <label for="rows-input">Filas</label>
+              <input id="rows-input" name="rows" type="number" min="5" max="200" step="1" value="100" required>
+              <span class="dimension-separator" aria-hidden="true">×</span>
+              <label for="columns-input">Columnas</label>
+              <input id="columns-input" name="columns" type="number" min="5" max="200" step="1" value="100" required>
+              <button class="apply-size" type="submit">Aplicar</button>
+            </form>
+            <div class="speed-control">
+              <label for="speed-input">VELOCIDAD <output id="speed-value">6 gen/s</output></label>
+              <input id="speed-input" type="range" min="1" max="20" value="6">
+            </div>
+          </div>
+
+          <div class="board-meta">
+            <p id="board-dimensions">100 filas × 100 columnas</p>
+            <p class="board-hint"><span class="hint-dot" aria-hidden="true"></span> Selecciona una célula para cambiarla · Flechas para moverte</p>
+          </div>
+          <div class="board-frame">
+            <div id="game-board" class="game-board" role="grid" aria-label="Tablero del Juego de la Vida, 100 filas por 100 columnas" aria-rowcount="100" aria-colcount="100" aria-describedby="board-instructions"></div>
+          </div>
+          <p id="board-instructions" class="sr-only">Usa las flechas para moverte entre células. Pulsa Espacio o Enter para cambiar una célula viva o muerta.</p>
+          <p id="announcements" class="sr-only" role="status" aria-live="polite"></p>
+        </section>
+
+        <section id="reglas" class="rules-section" aria-labelledby="rules-title">
+          <div class="rules-intro">
+            <p class="eyebrow">EL SISTEMA</p>
+            <h2 id="rules-title">Cuatro reglas.<br><em>Infinitas posibilidades.</em></h2>
+            <p>En cada paso, todas las células se actualizan a la vez. Solo importa cuántas vecinas están vivas.</p>
+          </div>
+          <div class="rule-list">
+            <article class="rule-card">
+              <span class="rule-number">01</span>
+              <div><h3>Sobrevive</h3><p>Una célula viva con <strong>2 o 3 vecinas</strong> sigue viva.</p></div>
+              <span class="rule-mark mark-live" aria-hidden="true"></span>
+            </article>
+            <article class="rule-card">
+              <span class="rule-number">02</span>
+              <div><h3>Nace</h3><p>Una célula muerta con <strong>exactamente 3 vecinas</strong> cobra vida.</p></div>
+              <span class="rule-mark mark-born" aria-hidden="true"></span>
+            </article>
+            <article class="rule-card">
+              <span class="rule-number">03</span>
+              <div><h3>Soledad</h3><p>Con menos de 2 vecinas, una célula viva muere.</p></div>
+              <span class="rule-mark mark-lonely" aria-hidden="true"></span>
+            </article>
+            <article class="rule-card">
+              <span class="rule-number">04</span>
+              <div><h3>Superpoblación</h3><p>Con más de 3 vecinas, una célula viva muere.</p></div>
+              <span class="rule-mark mark-crowded" aria-hidden="true"></span>
+            </article>
+          </div>
+        </section>
+      </main>
+
+      <footer class="site-footer">
+        <a class="wordmark footer-mark" href="#inicio">
+          <span class="wordmark-icon" aria-hidden="true"><i></i><i></i><i></i><i></i></span>
+          <span>conway<span class="wordmark-light">lab</span></span>
+        </a>
+        <p>Un experimento sobre cómo reglas sencillas crean mundos complejos.</p>
+        <a href="#inicio" class="back-top">VOLVER ARRIBA ↑</a>
+      </footer>
+    </div>
+  </body>
+</html>

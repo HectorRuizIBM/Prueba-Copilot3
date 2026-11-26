@@ -18,7 +18,7 @@ handoffs:
     send: false
   - label: Verificar entrega
     agent: verificador
-        prompt: Verifica la aplicación recién construida en la raíz exacta registrada en proyectos/<slug>/docs/plan-aplicacion.md. Arranca sus servicios con los comandos y permisos aprobados y delega en playwright las pruebas de su URL local efectiva y criterios de aceptación. Guarda evidencias en el proyecto y devuelve fallos reproducibles; no pruebes Viewnext ni otra web como sustituto.
+    prompt: Verifica la aplicación recién construida en la raíz exacta registrada en proyectos/<slug>/docs/plan-aplicacion.md. Arranca sus servicios con los comandos y permisos aprobados y delega en playwright las pruebas de su URL local efectiva y criterios de aceptación. Guarda evidencias en el proyecto y devuelve fallos reproducibles; no pruebes Viewnext ni otra web como sustituto.
     send: false
 ---
 # Orquestador web
