@@ -1,0 +1,21 @@
+{
+  "name": "prueba-copilot3",
+  "version": "1.0.0",
+  "description": "Este repositorio es un espacio de trabajo para diseñar y probar las capacidades de personalización de GitHub Copilot en VS Code: instrucciones, agentes especializados, skills, delegación como herramienta, handoffs y hooks de ciclo de vida.",
+  "main": "index.js",
+  "scripts": {},
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/HectorRuizIBM/Prueba-Copilot3.git"
+  },
+  "keywords": [],
+  "type": "commonjs",
+  "bugs": {
+    "url": "https://github.com/HectorRuizIBM/Prueba-Copilot3/issues"
+  },
+  "homepage": "https://github.com/HectorRuizIBM/Prueba-Copilot3#readme",
+  "devDependencies": {
+    "@playwright/test": "^1.65.1",
+    "@types/node": "^26.6.11"
+  }
+}
