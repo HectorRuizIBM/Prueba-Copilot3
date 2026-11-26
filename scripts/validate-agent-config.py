@@ -39,7 +39,7 @@ for path, header in texts:
     for target in targets:
         if target.strip() not in names:
             errors.append(f'{path.name}: destino inexistente {target}')
-if len(agent_files) != 8 or len(skill_files) != 9:
+if len(agent_files) != 9 or len(skill_files) != 10:
     errors.append(f'Conteo inesperado: {len(agent_files)} agentes, {len(skill_files)} skills')
 if errors:
     raise SystemExit('\n'.join(errors))
