@@ -1,0 +1,12 @@
+{
+  "version": 1,
+  "hooks": {
+    "sessionStart": [
+      {
+        "type": "command",
+        "command": "cmd.exe /d /c scripts\\preflight\\check-python.cmd",
+        "timeoutSec": 10
+      }
+    ]
+  }
+}
