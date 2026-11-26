@@ -15,7 +15,7 @@ El objetivo de la investigación es distinguir lo que está definido en los arch
 - Hay un hook configurado en `.github/hooks/check-python.json` para el evento `sessionStart`. Su descubrimiento y ejecución real en Copilot en VS Code están pendientes de verificación.
 - Las aplicaciones de `proyectos/` son ejemplos para probar el flujo de desarrollo. La tienda de libros juveniles no implementa por sí misma hooks ni handoffs.
 
-## Qué se investiga
+## Qué se investiga.
 
 ### Agentes como herramientas y handoffs
 
