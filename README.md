@@ -25,6 +25,32 @@ El objetivo de la investigación es distinguir lo que está definido en los arch
 
 El agente `orquestador-web` declara handoffs a `investigador-entorno`, `frontend`, `backend` y `verificador`. Los especialistas incluyen rutas de retorno. Esto describe la configuración escrita; su funcionamiento real debe comprobarse en el cliente de Copilot elegido.
 
+### Flujo completo desde la petición hasta la entrega
+
+El usuario selecciona **`orquestador-web`** en Copilot Chat y describe la aplicación que quiere crear. El orquestador coordina el proceso; no todos los especialistas tienen que intervenir ni existe una cadena automática obligatoria.
+
+```text
+Usuario → orquestador-web
+              → investigador-entorno
+                  → instaladores necesarios (con aprobación)
+              → frontend y/o backend
+              → verificador
+                  → playwright
+              ← resultados, evidencias y bloqueos
+Usuario ← entrega del orquestador
+```
+
+1. **Orquestador — requisitos y planificación.** Aclara objetivo, público, funcionalidades, estilo y restricciones. Comprueba la carpeta `proyectos/<slug>/`, preserva el contenido existente y registra decisiones, permisos, contratos y criterios de aceptación en `docs/plan-aplicacion.md` del proyecto. Solicita aprobación del stack antes de crear código o instalar herramientas.
+2. **Investigador — entorno y recomendaciones.** Recibe la ruta exacta y las decisiones vigentes. Comprueba SO, shell, runtimes reales, versiones, manifiestos y restricciones sin instalar nada. Documenta evidencias, compatibilidad, comandos propuestos y bloqueos en `docs/entorno.md` del proyecto, y devuelve sus conclusiones para aprobar las decisiones pendientes.
+3. **Instaladores — preparación autorizada.** El investigador coordina `instalador-python`, `instalador-streamlit` o `instalador-nodejs` únicamente cuando el stack los necesita y existe aprobación explícita. Streamlit requiere primero Python y una venv verificada; una aplicación exclusivamente Streamlit no necesita Node.js por defecto. Cada instalador devuelve versiones, rutas, comandos y resultados. Si no está disponible la delegación anidada, el investigador devuelve los encargos al orquestador.
+4. **Frontend y backend — construcción.** El orquestador define el contrato de datos/API y asigna archivos separados antes de delegar. Frontend implementa la interfaz, navegación y estados; backend implementa lógica, validación y persistencia cuando se necesitan. Ambos trabajan dentro del proyecto asignado y devuelven cambios, verificaciones y discrepancias. No se ejecutan en paralelo sobre los mismos archivos; una aplicación sin backend no requiere crear uno artificialmente.
+5. **Verificador y Playwright — revisión independiente.** El verificador consulta la aceptación, ejecuta las comprobaciones existentes y arranca la aplicación con los comandos y permisos aprobados. Delega en `playwright` las pruebas de la URL local efectiva. Los tests y artefactos permanecen en el proyecto; el verificador contrasta las evidencias y escribe `docs/verificacion.md` con criterios aprobados, fallidos o no ejecutados. Si la aplicación no arranca, registra el bloqueo en lugar de probar otra web.
+6. **Correcciones y entrega — vuelta al orquestador.** El verificador devuelve los fallos reproducibles al orquestador, que asigna las correcciones al especialista responsable y solicita una nueva verificación. Tras dos intentos fallidos de reparación, comunica el bloqueo y pide una decisión. La entrega incluye ubicación del proyecto, instrucciones de ejecución, resultados reales y limitaciones; no se declara terminada una aplicación que no se ha probado.
+
+**Cómo pasa el control:** una delegación mediante la herramienta de subagentes devuelve el resultado al agente invocante, que continúa su trabajo. Un **handoff** requiere intervención del usuario y transfiere la conversación; el retorno necesita otro handoff o una acción del usuario. Los archivos configuran estas rutas, pero no garantizan su ejecución: la disponibilidad de delegación, especialmente anidada, depende del cliente y de la sesión de Copilot. Si no está disponible, se ofrece un handoff o se devuelve el encargo, sin simular llamadas ni resultados.
+
+Cada encargo debe incluir objetivo, ruta exacta, contrato, archivos autorizados, permisos y verificaciones esperadas. Las instalaciones no quedan autorizadas por el mero hecho de pedir una aplicación.
+
 ### Verificación de la aplicación creada con Playwright
 
 El objetivo de la revisión es **la aplicación que frontend/backend acaban de construir en `proyectos/<slug>/`**, no Viewnext ni otra web externa.
@@ -54,7 +80,32 @@ Selecciona `verificador` y sustituye `<slug>` por el proyecto recién creado:
 
 La suite `tests/example.spec.js` de la raíz para Viewnext es un experimento externo separado, **no** la ubicación ni el objetivo de las pruebas de aplicaciones nuevas. La configuración de delegación existe, pero su ejecución real en Copilot en VS Code debe comprobarse; este README no afirma que las aplicaciones hayan superado estas pruebas.
 
+#### Dónde se guardan las pruebas y los resultados
+
+Para cada aplicación nueva, las instrucciones exigen mantener estos archivos dentro de `proyectos/<slug>/`:
+
+| Contenido | Ubicación |
+|---|---|
+| Pruebas automatizadas | `proyectos/<slug>/tests/` |
+| Configuración de Playwright, si se utiliza | `proyectos/<slug>/playwright.config.*` |
+| Informe de aceptación, comandos, resultados y limitaciones | `proyectos/<slug>/docs/verificacion.md` |
+| Artefactos de ejecución y reporte HTML | Rutas definidas en la configuración propia del proyecto; se recomienda `test-results/` y `playwright-report/` dentro de su carpeta. |
+
+Estas rutas de artefactos **no se configuran automáticamente por las instrucciones del agente**. El especialista debe definirlas y registrar las rutas reales generadas. Las capturas y trazas solo existen si se habilitan y generan durante la ejecución.
+
+La configuración `playwright.config.js` de la raíz descubre la suite de `tests/` y utiliza el reporter HTML: sus ubicaciones predeterminadas son `test-results/` y `playwright-report/` en la raíz. No descubre automáticamente las pruebas dentro de `proyectos/`.
+
+**Situación del Juego de la Vida:** se conserva la suite [tests/life.test.cjs](proyectos/juego-vida-conway/tests/life.test.cjs), que usa `node:test` para comprobar la lógica. Su [informe de verificación](proyectos/juego-vida-conway/docs/verificacion.md) documenta comprobaciones puntuales con Playwright, pero no hay una suite de navegador guardada en el proyecto. Esas comprobaciones no equivalen a disponer de un archivo `.spec.js` reproducible; queda pendiente crearlo y conservar su configuración.
+
+#### Agente Playwright, dependencias y servidor MCP
+
+- [`.github/agents/playwright.agent.md`](.github/agents/playwright.agent.md) es el especialista configurado para Copilot en VS Code. El verificador delega en este agente; la carpeta se llama **`agents`**, no `agentes`.
+- `playwright-mcp/`, si está presente, contiene un proyecto de servidor MCP separado. No es el perfil del agente y su presencia no implica que Copilot lo utilice: requiere una integración MCP configurada por separado.
+- `node_modules/` contiene las dependencias instaladas localmente, incluido Playwright Test en la raíz. No contiene la definición del agente. Borrarlo requiere restaurar las dependencias antes de volver a ejecutar esas pruebas.
+- `playwright-report/` contiene un informe generado, no código del agente ni pruebas. Puede regenerarse ejecutando la suite con el reporter HTML; eliminarlo pierde el informe anterior.
+
 ### Hooks
+
 
 Un hook ejecuta un comando cuando ocurre un evento del agente, sin depender de que el modelo decida invocar una herramienta. El ejemplo creado comprueba Python al inicio de una sesión, sin instalar software.
 
@@ -113,18 +164,84 @@ Referencias oficiales: [Hooks en VS Code](https://code.visualstudio.com/docs/age
 
 - [Gestor de tareas](proyectos/gestor-tareas/README.md): ejemplo local con Python, Streamlit y SQLite.
 - [Tienda juvenil de libros](proyectos/tienda-libros-juvenil/README.md): ejemplo con React, TypeScript, Vite, FastAPI y SQLite. Tiene su propio plan, informe de entorno y verificación.
+- [Juego de la Vida de Conway](proyectos/juego-vida-conway/README.md): simulador local con HTML, CSS y JavaScript nativos, sin backend ni dependencias de ejecución. Conserva pruebas de lógica con `node:test`; las comprobaciones de navegador documentadas aún no tienen una suite Playwright guardada.
+
 
 Los detalles de stack, comandos y resultados pertenecen al README y a los documentos de cada aplicación; no se duplican aquí.
+
+## Obtener una copia funcional del repositorio
+
+### Requisitos generales
+
+No es necesario instalar todo el stack para clonar o leer el repositorio; instala solo lo que necesites ejecutar.
+
+- **Git**, para clonar.
+- **Visual Studio Code** y las extensiones oficiales de **GitHub Copilot / Copilot Chat**, con acceso a Copilot, para utilizar los agentes, instructions, skills y hooks. La disponibilidad puede depender de las versiones, la cuenta y las políticas de la organización.
+- **Node.js y npm**, para Playwright Test y los proyectos JavaScript/TypeScript. Usa una versión compatible con los requisitos del proyecto; la tienda juvenil documenta Node.js 24 o compatible con Vite 8.
+- **Python**, para el validador y las aplicaciones Python. La tienda documenta Python 3.14; revisa también los requisitos de cada aplicación.
+- **Playwright:** la extensión de VS Code es opcional. Para ejecutar pruebas se necesitan las dependencias npm y los navegadores indicados abajo.
+
+El hook de Python del repositorio ejecuta un `.cmd` de Windows: no funciona tal cual en macOS o Linux. Los agentes y skills son archivos del repositorio, pero solo estarán disponibles si la versión y el modo de Copilot en VS Code admiten su formato.
+
+
+
+Clona el repositorio y abre su raíz en VS Code:
+
+
+```cmd
+git clone https://github.com/HectorRuizIBM/Prueba-Copilot3.git
+cd Prueba-Copilot3
+code .
+```
+
+La ruta puede cambiar según la ubicación elegida. No se versionan dependencias instaladas, entornos virtuales, bases de datos locales ni reportes generados; deben prepararse según el proyecto que se vaya a ejecutar.
+
+### Playwright: qué instalar
+
+**La extensión de Playwright para VS Code no es obligatoria** para ejecutar las pruebas. Es una integración opcional que aporta acciones desde el editor; el comando de pruebas usa el paquete npm `@playwright/test` declarado en `package.json` y los navegadores de Playwright. El agente personalizado está en `.github/agents/playwright.agent.md`; no es la extensión ni el servidor MCP `playwright-mcp/`.
+
+Desde la raíz, después de clonar, instala las dependencias fijadas por el lockfile y el navegador Chromium:
+
+```cmd
+npm ci
+npx playwright install chromium
+```
+
+Para instalar los tres navegadores configurados (Chromium, Firefox y WebKit), usa `npx playwright install`. En Linux puede ser necesario instalar dependencias del sistema; Playwright ofrece `npx playwright install --with-deps chromium`, que puede requerir permisos del sistema. No ejecutes instalaciones con privilegios elevados sin revisar y aprobarlas.
+
+La suite de ejemplo de la raíz se ejecuta con:
+
+```cmd
+npx playwright test tests/example.spec.js --project=chromium
+```
+
+Su informe HTML y resultados se generan en `playwright-report/` y `test-results/`. En otros proyectos, sigue su README: cada aplicación puede tener requisitos, comandos y configuración independientes. Para el flujo de agentes, las pruebas y artefactos deben permanecer en `proyectos/<slug>/`.
+
+### Aplicaciones incluidas
+
+Cada aplicación tiene su propio README con preparación, arranque y pruebas. En particular:
+
+- **Gestor de tareas:** requiere Python y Streamlit; consulta [su README](proyectos/gestor-tareas/README.md). Para una copia clonada, desde su carpeta crea el entorno virtual con `py -m venv .venv`, instala con `.venv\Scripts\python.exe -m pip install -r requirements.txt` y arranca con `.venv\Scripts\python.exe -m streamlit run app.py --server.address 127.0.0.1`. El comando de ejecución del README de la aplicación aún contiene una ruta local del equipo original; la base de datos se crea localmente.
+
+
+- **Tienda juvenil de libros:** requiere Node.js/npm y Python; sigue [sus instrucciones](proyectos/tienda-libros-juvenil/README.md) para instalar dependencias en `frontend` y crear el entorno virtual del backend.
+- **Juego de la Vida:** se abre como web estática; requiere Node.js solo para sus pruebas unitarias. Consulta [su README](proyectos/juego-vida-conway/README.md).
+
+Las dependencias y los navegadores deben instalarse en cada equipo; `node_modules/`, entornos virtuales, SQLite y reportes generados no se distribuyen como parte de una clonación limpia. Los lockfiles npm sí están versionados para reproducir las dependencias. Las bases SQLite locales se crean o se usan según cada aplicación y pueden contener datos de demostración o del usuario. No dependas de bases de datos locales preexistentes para preparar una copia nueva; conserva respaldos propios cuando corresponda.
+
 
 ## Comprobaciones disponibles
 
 Desde la raíz del repositorio, en PowerShell:
 
+
+```powershell
 ```powershell
 python scripts\validate-agent-config.py
 ```
 
-La salida esperada identifica nueve agentes, diez skills y destinos resueltos. Es una comprobación del contenido de los archivos, no una prueba de integración con Copilot.
+En una instalación limpia de Windows, si el comando `python` no está disponible pero sí el lanzador `py`, puede usarse `py -3 scripts\validate-agent-config.py`. La salida esperada identifica nueve agentes, diez skills y destinos resueltos. Es una comprobación del contenido de los archivos, no una prueba de integración con Copilot.
+
 
 Para comprobar Python en Windows desde `cmd.exe`, desde la raíz del repositorio:
 
