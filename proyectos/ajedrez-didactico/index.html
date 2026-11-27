@@ -1,0 +1,249 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#f5f2ea">
+  <meta name="description" content="Aprende las reglas esenciales del ajedrez y recorre una partida histórica de Scachs d'amor.">
+  <title>Ajedrez desde el principio · Scachs d'amor</title>
+  <link rel="stylesheet" href="styles.css">
+  <script src="game-data.js" defer></script>
+  <script src="app.js" defer></script>
+</head>
+<body>
+  <a class="skip-link" href="#contenido">Saltar al contenido</a>
+
+  <header class="site-header">
+    <a class="brand" href="#inicio" aria-label="Ajedrez desde el principio, inicio">
+      <span class="brand-mark" aria-hidden="true">♞</span>
+      <span>Ajedrez <span class="brand-light">desde el principio</span></span>
+    </a>
+    <nav class="main-nav" aria-label="Navegación principal">
+      <a href="#introduccion">Introducción</a>
+      <a href="#reglas">Reglas</a>
+      <a href="#piezas">Las piezas</a>
+      <a href="#partida">Partida histórica</a>
+    </nav>
+  </header>
+
+  <main id="contenido">
+    <section class="hero section-wrap" id="inicio" aria-labelledby="hero-title">
+      <div class="hero-copy">
+        <p class="eyebrow"><span class="eyebrow-line" aria-hidden="true"></span> Una guía para empezar</p>
+        <h1 id="hero-title">Piensa una jugada.<br><span>Descubre un mundo.</span></h1>
+        <p class="hero-lede">Aprende lo esencial del ajedrez con explicaciones claras y recorre, movimiento a movimiento, una partida valenciana del siglo XV.</p>
+        <div class="hero-actions">
+          <a class="button button-primary" href="#reglas">Aprender las reglas <span aria-hidden="true">↓</span></a>
+          <a class="text-link" href="#partida">Ir a la partida <span aria-hidden="true">→</span></a>
+        </div>
+        <div class="hero-note">
+          <span class="note-icon" aria-hidden="true">♙</span>
+          <p><strong>Sin prisa, a tu ritmo.</strong><br>Un tablero, seis piezas y una buena historia.</p>
+        </div>
+      </div>
+      <div class="hero-art" aria-label="Ilustración decorativa de un tablero de ajedrez">
+        <div class="art-caption"><span>01</span> TODO EMPIEZA EN EL TABLERO</div>
+        <div class="mini-board" aria-hidden="true">
+          <span>♜</span><span></span><span>♝</span><span></span>
+          <span></span><span>♟</span><span></span><span>♟</span>
+          <span>♞</span><span></span><span>♛</span><span></span>
+          <span></span><span>♙</span><span></span><span>♙</span>
+        </div>
+        <div class="art-foot"><span>VALENCIA</span><span>HACIA 1475</span></div>
+        <span class="art-ring art-ring-one" aria-hidden="true"></span>
+        <span class="art-ring art-ring-two" aria-hidden="true"></span>
+      </div>
+    </section>
+
+    <section class="intro-section section-wrap" id="introduccion" aria-labelledby="intro-title">
+      <div class="section-heading">
+        <p class="eyebrow">01 / Para empezar</p>
+        <h2 id="intro-title">¿De qué va el ajedrez?</h2>
+      </div>
+      <div class="intro-content">
+        <p class="intro-strong">Dos personas. Un tablero. Un objetivo: dar jaque mate al rey rival.</p>
+        <p>Se juega por turnos en un tablero de 64 casillas. Las blancas mueven primero; después, cada bando mueve una pieza por turno. No se captura al rey: la partida termina cuando no puede escapar de una amenaza.</p>
+        <div class="concept-row">
+          <article class="concept-card">
+            <span class="concept-number">A</span>
+            <h3>Jaque</h3>
+            <p>El rey está amenazado. Hay que responder enseguida: moverlo, bloquear la amenaza o capturar la pieza que ataca.</p>
+          </article>
+          <article class="concept-card">
+            <span class="concept-number">B</span>
+            <h3>Jaque mate</h3>
+            <p>El rey está en jaque y no existe ninguna respuesta legal. La partida termina; quien da mate gana.</p>
+          </article>
+          <article class="concept-card">
+            <span class="concept-number">C</span>
+            <h3>Tablas</h3>
+            <p>Si nadie puede ganar según las reglas —por ejemplo, por ahogado— la partida puede acabar en empate.</p>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section class="rules-section" id="reglas" aria-labelledby="rules-title">
+      <div class="section-wrap">
+        <div class="section-heading section-heading-light">
+          <p class="eyebrow">02 / Lo esencial</p>
+          <h2 id="rules-title">Reglas que te ponen en juego</h2>
+          <p class="section-intro">Empieza con estos principios. Cada jugada debe ser legal: nunca puedes dejar tu propio rey en jaque.</p>
+        </div>
+        <div class="rules-grid">
+          <article class="rule-item">
+            <span class="rule-icon" aria-hidden="true">↔</span>
+            <div><h3>Un turno cada vez</h3><p>Blancas mueven primero y luego se alternan los turnos. En tu turno, mueve una pieza a una casilla permitida; solo el caballo puede saltar sobre otras piezas.</p></div>
+          </article>
+          <article class="rule-item">
+            <span class="rule-icon" aria-hidden="true">♔</span>
+            <div><h3>Protege a tu rey</h3><p>Una pieza no puede moverse si con ello deja a su rey amenazado. Si el rey está en jaque, la respuesta debe eliminar la amenaza.</p></div>
+          </article>
+          <article class="rule-item">
+            <span class="rule-icon" aria-hidden="true">×</span>
+            <div><h3>Capturar</h3><p>Salvo el peón, las piezas capturan como se mueven: ocupan la casilla rival y retiran esa pieza. No se captura una pieza propia.</p></div>
+          </article>
+          <article class="rule-item">
+            <span class="rule-icon" aria-hidden="true">♙</span>
+            <div><h3>Enroque</h3><p>Un movimiento especial de rey y torre. Solo si ninguno se ha movido, no hay piezas entre ambos y el rey no está, pasa por, ni termina en una casilla atacada.</p></div>
+          </article>
+          <article class="rule-item">
+            <span class="rule-icon" aria-hidden="true">↗</span>
+            <div><h3>Captura al paso</h3><p>Si un peón avanza dos casillas desde su inicio y queda junto a un peón rival, este puede capturarlo como si hubiera avanzado una. Solo en la jugada inmediatamente siguiente.</p></div>
+          </article>
+          <article class="rule-item">
+            <span class="rule-icon" aria-hidden="true">♕</span>
+            <div><h3>Promoción</h3><p>Al llegar a la última fila, un peón se convierte en dama, torre, alfil o caballo de su color; no tiene que ser una pieza ya capturada.</p></div>
+          </article>
+        </div>
+        <p class="rules-footnote">La partida también puede terminar en tablas, por ejemplo si el jugador al turno no tiene jugadas legales y su rey no está en jaque: eso es ahogado, no mate.</p>
+      </div>
+    </section>
+
+    <section class="pieces-section section-wrap" id="piezas" aria-labelledby="pieces-title">
+      <div class="section-heading">
+        <p class="eyebrow">03 / Seis maneras de avanzar</p>
+        <h2 id="pieces-title">Conoce tus piezas</h2>
+        <p class="section-intro">Las piezas se mueven de formas distintas. Aprende el patrón y luego mira siempre si el camino está libre.</p>
+      </div>
+      <div class="pieces-grid">
+        <article class="piece-card piece-king">
+          <div class="piece-top"><span class="piece-glyph" aria-hidden="true">♔</span><span class="piece-tag">01</span></div>
+          <h3>Rey</h3><p>Una casilla en cualquier dirección. No puede moverse a una casilla atacada.</p>
+        </article>
+        <article class="piece-card">
+          <div class="piece-top"><span class="piece-glyph" aria-hidden="true">♕</span><span class="piece-tag">02</span></div>
+          <h3>Dama</h3><p>Cualquier distancia en línea recta: horizontal, vertical o diagonal. No salta piezas.</p>
+        </article>
+        <article class="piece-card">
+          <div class="piece-top"><span class="piece-glyph" aria-hidden="true">♖</span><span class="piece-tag">03</span></div>
+          <h3>Torre</h3><p>Cualquier distancia en horizontal o vertical, si no hay piezas que bloqueen el paso.</p>
+        </article>
+        <article class="piece-card">
+          <div class="piece-top"><span class="piece-glyph" aria-hidden="true">♗</span><span class="piece-tag">04</span></div>
+          <h3>Alfil</h3><p>Cualquier distancia en diagonal. Cada alfil permanece en el color de casilla en que empezó.</p>
+        </article>
+        <article class="piece-card">
+          <div class="piece-top"><span class="piece-glyph" aria-hidden="true">♘</span><span class="piece-tag">05</span></div>
+          <h3>Caballo</h3><p>En forma de «L»: dos casillas en una dirección y una perpendicular. Es la única pieza que salta.</p>
+        </article>
+        <article class="piece-card">
+          <div class="piece-top"><span class="piece-glyph" aria-hidden="true">♙</span><span class="piece-tag">06</span></div>
+          <h3>Peón</h3><p>Avanza una casilla hacia delante; en su primer movimiento puede avanzar dos si ambas casillas están libres. Captura una casilla en diagonal.</p>
+        </article>
+      </div>
+    </section>
+
+    <section class="game-section" id="partida" aria-labelledby="game-title">
+      <div class="section-wrap">
+        <div class="game-heading">
+          <div class="section-heading section-heading-light">
+            <p class="eyebrow">04 / Una partida para recorrer</p>
+            <h2 id="game-title"><i>Scachs d'amor</i></h2>
+            <p class="section-intro">Valencia, probablemente hacia 1475. Explora el registro de movimientos; usa los controles o el teclado para avanzar y retroceder.</p>
+          </div>
+          <div class="history-note">
+            <span class="history-mark" aria-hidden="true">✦</span>
+            <p>Se considera el <strong>primer registro conocido conservado</strong> de una partida con los movimientos modernos de dama y alfil. No demuestra que fuera la primera vez que se jugaron así.</p>
+          </div>
+        </div>
+
+        <div class="game-layout">
+          <div class="board-panel">
+            <div class="board-topline">
+              <span class="board-label">TABLERO DE JUEGO</span>
+              <span class="board-coordinates">BLANCAS <span aria-hidden="true">·</span> DESDE ABAJO</span>
+            </div>
+            <div class="board-with-coordinates">
+              <div class="rank-labels" aria-hidden="true"><span>8</span><span>7</span><span>6</span><span>5</span><span>4</span><span>3</span><span>2</span><span>1</span></div>
+              <div id="chessboard" class="chessboard" role="table" aria-label="Tablero de ajedrez, posición inicial" aria-describedby="board-help"></div>
+            </div>
+            <div class="file-labels" aria-hidden="true"><span>a</span><span>b</span><span>c</span><span>d</span><span>e</span><span>f</span><span>g</span><span>h</span></div>
+            <p class="board-help" id="board-help">Tablero de solo lectura. Recorre la partida con los controles o el listado de jugadas.</p>
+            <div class="playback-controls" role="group" aria-label="Controles de reproducción">
+              <button class="control-button control-secondary" id="start-button" type="button" aria-label="Volver a la posición inicial" disabled><span aria-hidden="true">|◀</span><span class="control-text">Inicio</span></button>
+              <button class="control-button control-secondary" id="previous-button" type="button" aria-label="Jugada anterior" disabled><span aria-hidden="true">←</span><span class="control-text">Anterior</span></button>
+              <button class="control-button control-play" id="play-button" type="button" aria-label="Reproducir partida" disabled><span id="play-icon" aria-hidden="true">▶</span><span id="play-label">Reproducir</span></button>
+              <button class="control-button control-secondary" id="next-button" type="button" aria-label="Siguiente jugada" disabled><span class="control-text">Siguiente</span><span aria-hidden="true">→</span></button>
+            </div>
+          </div>
+
+          <aside class="game-sidebar" aria-label="Información de la partida">
+            <div class="game-meta">
+              <p class="eyebrow">EL POEMA Y LA PARTIDA</p>
+              <h3>Un registro valenciano</h3>
+              <p><i>Scachs d'amor</i> es un poema alegórico atribuido a Francesc de Castellví, Narcís Vinyoles y Bernat Fenollar.</p>
+              <dl class="players">
+                <div><dt><span class="player-dot white-dot" aria-hidden="true"></span> Blancas</dt><dd>Castellví</dd></div>
+                <div><dt><span class="player-dot black-dot" aria-hidden="true"></span> Negras</dt><dd>Vinyoles</dd></div>
+                <div><dt>Árbitro y comentarista</dt><dd>Fenollar</dd></div>
+              </dl>
+            </div>
+
+            <div class="move-card" aria-label="Jugada actual">
+              <div class="move-card-top"><span class="eyebrow">POSICIÓN</span><span id="move-count" class="move-count">—</span></div>
+              <p id="move-notation" class="move-notation">Preparando partida…</p>
+              <p id="turn-label" class="turn-label">Cargando los movimientos</p>
+              <div class="progress-track" role="progressbar" aria-label="Progreso de la partida" aria-valuemin="0" aria-valuemax="41" aria-valuenow="0" id="game-progress"><span id="progress-fill"></span></div>
+            </div>
+            <p id="game-status" class="game-status" role="status" aria-live="polite">Cargando los movimientos de la partida…</p>
+            <p id="game-error" class="game-error" role="alert" hidden></p>
+            <div class="notation-panel">
+              <h3>Recorrido de jugadas</h3>
+              <p class="notation-help">Selecciona una jugada para ver esa posición.</p>
+              <div class="notation-scroll" tabindex="0" aria-label="Listado desplazable de jugadas">
+                <table>
+                  <caption class="visually-hidden">Notación de la partida, blancas y negras</caption>
+                  <thead><tr><th scope="col">N.º</th><th scope="col">Blancas</th><th scope="col">Negras</th></tr></thead>
+                  <tbody id="notation-list"></tbody>
+                </table>
+              </div>
+            </div>
+          </aside>
+        </div>
+        <p class="game-disclaimer">Reproducción de la secuencia transcrita, no un motor de ajedrez: no se aceptan movimientos libres ni se calculan amenazas intermedias.</p>
+      </div>
+    </section>
+
+    <section class="sources-section section-wrap" aria-labelledby="sources-title">
+      <div class="sources-heading">
+        <p class="eyebrow">Para seguir leyendo</p>
+        <h2 id="sources-title">Fuentes y contexto</h2>
+      </div>
+      <div class="sources-list">
+        <p>Transcripción de la partida y síntesis histórica:</p>
+        <a href="https://en.wikipedia.org/wiki/Scachs_d%27amor" target="_blank" rel="noopener noreferrer">Scachs d'amor · Wikipedia <span aria-hidden="true">↗</span></a>
+        <a href="https://doi.org/10.46586/zfk.2022.269-310" target="_blank" rel="noopener noreferrer">Estudio académico sobre el poema y el registro de movimientos modernos <span aria-hidden="true">↗</span></a>
+      </div>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <div class="section-wrap footer-inner">
+      <a class="brand footer-brand" href="#inicio"><span class="brand-mark" aria-hidden="true">♞</span><span>Ajedrez <span class="brand-light">desde el principio</span></span></a>
+      <p>Aprender una jugada cada vez.</p>
+      <a href="#contenido">Volver arriba ↑</a>
+    </div>
+  </footer>
+</body>
+</html>
