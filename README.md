@@ -7,7 +7,7 @@ El objetivo de la investigación es distinguir lo que está definido en los arch
 ## Estado actual
 
 - Hay instrucciones generales en `.github/copilot-instructions.md`.
-- Hay nueve perfiles de agente en `.github/agents/` y diez skills en `.github/skills/`, incluido el especialista `playwright` y la skill `pruebas-web-playwright`.
+- Hay cinco perfiles de agente en `.github/agents/` y diez skills en `.github/skills/`, con Playwright integrado en `verificador` y la skill `pruebas-web-playwright`.
 - Los perfiles incluyen frontmatter `handoffs`, con rutas propuestas desde el orquestador a especialistas y de vuelta al orquestador.
 - `PLAN-AGENTES.md` describe la arquitectura y los experimentos pendientes.
 - `scripts/validate-agent-config.py` comprueba estructura, nombres, cantidad de agentes/skills y destinos declarados. **No** demuestra que VS Code descubra los perfiles, que un handoff funcione en una sesión ni que un hook se ejecute.
@@ -32,19 +32,17 @@ El usuario selecciona **`orquestador-web`** en Copilot Chat y describe la aplica
 ```text
 Usuario → orquestador-web
               → investigador-entorno
-                  → instaladores necesarios (con aprobación)
               → frontend y/o backend
               → verificador
-                  → playwright
               ← resultados, evidencias y bloqueos
 Usuario ← entrega del orquestador
 ```
 
 1. **Orquestador — requisitos y planificación.** Aclara objetivo, público, funcionalidades, estilo y restricciones. Comprueba la carpeta `proyectos/<slug>/`, preserva el contenido existente y registra decisiones, permisos, contratos y criterios de aceptación en `docs/plan-aplicacion.md` del proyecto. Solicita aprobación del stack antes de crear código o instalar herramientas.
 2. **Investigador — entorno y recomendaciones.** Recibe la ruta exacta y las decisiones vigentes. Comprueba SO, shell, runtimes reales, versiones, manifiestos y restricciones sin instalar nada. Documenta evidencias, compatibilidad, comandos propuestos y bloqueos en `docs/entorno.md` del proyecto, y devuelve sus conclusiones para aprobar las decisiones pendientes.
-3. **Instaladores — preparación autorizada.** El investigador coordina `instalador-python`, `instalador-streamlit` o `instalador-nodejs` únicamente cuando el stack los necesita y existe aprobación explícita. Streamlit requiere primero Python y una venv verificada; una aplicación exclusivamente Streamlit no necesita Node.js por defecto. Cada instalador devuelve versiones, rutas, comandos y resultados. Si no está disponible la delegación anidada, el investigador devuelve los encargos al orquestador.
+3. **Preparación mediante hooks y procedimientos.** Los hooks en `.github/hooks/` detectan requisitos sin instalar software. El investigador aplica los procedimientos de preparación únicamente tras aprobación explícita del stack, comandos y alcance. No existen agentes instaladores ni delegación anidada.
 4. **Frontend y backend — construcción.** El orquestador define el contrato de datos/API y asigna archivos separados antes de delegar. Frontend implementa la interfaz, navegación y estados; backend implementa lógica, validación y persistencia cuando se necesitan. Ambos trabajan dentro del proyecto asignado y devuelven cambios, verificaciones y discrepancias. No se ejecutan en paralelo sobre los mismos archivos; una aplicación sin backend no requiere crear uno artificialmente.
-5. **Verificador y Playwright — revisión independiente.** El verificador consulta la aceptación, ejecuta las comprobaciones existentes y arranca la aplicación con los comandos y permisos aprobados. Delega en `playwright` las pruebas de la URL local efectiva. Los tests y artefactos permanecen en el proyecto; el verificador contrasta las evidencias y escribe `docs/verificacion.md` con criterios aprobados, fallidos o no ejecutados. Si la aplicación no arranca, registra el bloqueo en lugar de probar otra web.
+5. **Verificador con Playwright integrado.** Arranca la aplicación local y construye, guarda y ejecuta directamente su suite de navegador. Mantiene tests y artefactos en el proyecto y registra criterios aprobados, fallidos o no ejecutados en docs/verificacion.md. No invoca otro agente.
 6. **Correcciones y entrega — vuelta al orquestador.** El verificador devuelve los fallos reproducibles al orquestador, que asigna las correcciones al especialista responsable y solicita una nueva verificación. Tras dos intentos fallidos de reparación, comunica el bloqueo y pide una decisión. La entrega incluye ubicación del proyecto, instrucciones de ejecución, resultados reales y limitaciones; no se declara terminada una aplicación que no se ha probado.
 
 **Cómo pasa el control:** una delegación mediante la herramienta de subagentes devuelve el resultado al agente invocante, que continúa su trabajo. Un **handoff** requiere intervención del usuario y transfiere la conversación; el retorno necesita otro handoff o una acción del usuario. Los archivos configuran estas rutas, pero no garantizan su ejecución: la disponibilidad de delegación, especialmente anidada, depende del cliente y de la sesión de Copilot. Si no está disponible, se ofrece un handoff o se devuelve el encargo, sin simular llamadas ni resultados.
@@ -57,8 +55,8 @@ El objetivo de la revisión es **la aplicación que frontend/backend acaban de c
 
 1. **Orquestador → verificador:** entrega la raíz exacta del proyecto, su plan, criterios de aceptación y permisos.
 2. **Verificador:** lee los comandos existentes, arranca los servicios con permisos vigentes y datos temporales, comprueba que responden y obtiene la URL local efectiva. Si el arranque falla, registra el bloqueo sin sustituir la aplicación por una web externa.
-3. **Verificador → playwright:** invoca al especialista mediante la herramienta `agent`, indicando URL, criterios, rutas autorizadas, navegadores disponibles y acciones permitidas. Si la delegación anidada no está disponible, ofrece el handoff **Crear y ejecutar pruebas web** o devuelve el encargo al orquestador.
-4. **Playwright:** lee el plan y la implementación, construye y ejecuta pruebas de las funcionalidades reales siguiendo [pruebas-web-playwright](.github/skills/pruebas-web-playwright/SKILL.md). Mantiene pruebas, configuración propia y artefactos dentro del proyecto.
+3. **Verificador:** construye y guarda directamente pruebas siguiendo la skill pruebas-web-playwright, sin delegación.
+4. **Verificador:** ejecuta la suite con Playwright y conserva configuración y artefactos dentro del proyecto.
 5. **Verificador:** contrasta las evidencias, registra criterios aprobados, fallidos o no ejecutados en `proyectos/<slug>/docs/verificacion.md` y devuelve los fallos al orquestador. Detiene únicamente los procesos que haya iniciado.
 
 #### Controles de las pruebas
@@ -76,7 +74,7 @@ Las pruebas deben ser independientes, usar selectores accesibles y esperas de Pl
 
 Selecciona `verificador` y sustituye `<slug>` por el proyecto recién creado:
 
-> Verifica la aplicación recién construida en proyectos/<slug>/ según su docs/plan-aplicacion.md. Arranca sus servicios con los comandos existentes y permisos vigentes, y delega en playwright las pruebas de su URL local. Autoriza pruebas y artefactos dentro de este proyecto; no instales dependencias ni uses una web externa como sustituto. Registra evidencias y bloqueos en docs/verificacion.md del proyecto.
+> Verifica la aplicación recién construida en proyectos/<slug>/ según su docs/plan-aplicacion.md. Arranca sus servicios con los comandos existentes y permisos vigentes, y construye y ejecuta directamente con Playwright las pruebas de su URL local. Autoriza pruebas y artefactos dentro de este proyecto; no instales dependencias ni uses una web externa como sustituto. Registra evidencias y bloqueos en docs/verificacion.md del proyecto.
 
 La suite `tests/example.spec.js` de la raíz para Viewnext es un experimento externo separado, **no** la ubicación ni el objetivo de las pruebas de aplicaciones nuevas. La configuración de delegación existe, pero su ejecución real en Copilot en VS Code debe comprobarse; este README no afirma que las aplicaciones hayan superado estas pruebas.
 
@@ -99,7 +97,7 @@ La configuración `playwright.config.js` de la raíz descubre la suite de `tests
 
 #### Agente Playwright, dependencias y servidor MCP
 
-- [`.github/agents/playwright.agent.md`](.github/agents/playwright.agent.md) es el especialista configurado para Copilot en VS Code. El verificador delega en este agente; la carpeta se llama **`agents`**, no `agentes`.
+- [`.github/agents/verificador.agent.md`](.github/agents/verificador.agent.md) integra verificación y Playwright. El perfil anterior se conserva únicamente como archivo histórico en docs/archivo-agentes/, fuera del descubrimiento de agentes.
 - `playwright-mcp/`, si está presente, contiene un proyecto de servidor MCP separado. No es el perfil del agente y su presencia no implica que Copilot lo utilice: requiere una integración MCP configurada por separado.
 - `node_modules/` contiene las dependencias instaladas localmente, incluido Playwright Test en la raíz. No contiene la definición del agente. Borrarlo requiere restaurar las dependencias antes de volver a ejecutar esas pruebas.
 - `playwright-report/` contiene un informe generado, no código del agente ni pruebas. Puede regenerarse ejecutando la suite con el reporter HTML; eliminarlo pierde el informe anterior.
@@ -152,7 +150,7 @@ Referencias oficiales: [Hooks en VS Code](https://code.visualstudio.com/docs/age
 | Ruta | Propósito |
 |---|---|
 | `.github/copilot-instructions.md` | Reglas generales, aislamiento por proyecto, permisos y coordinación. |
-| `.github/agents/` | Orquestador, investigador, instaladores, frontend, backend, verificador y especialista Playwright. |
+| `.github/agents/` | Cinco agentes: orquestador, investigador, frontend, backend y verificador con Playwright. |
 | `.github/skills/` | Guías reutilizables de diseño, entorno, instalación, SQLite, verificación y pruebas web con Playwright. |
 | `PLAN-AGENTES.md` | Arquitectura, diferencias entre delegación y handoff, propuesta de hooks y criterios de aceptación. |
 | `scripts/validate-agent-config.py` | Validación estructural estática, sin dependencias externas. |
@@ -260,13 +258,13 @@ El preflight no instala herramientas, no cambia PATH y no crea entornos virtuale
 5. Verificar los casos de Python disponible y ausente en entornos controlados; comprobar por separado la compatibilidad de versión con el stack seleccionado.
 6. Si no hay soporte o el formato no es compatible, probar y documentar el preflight como alternativa explícita.
 
-7. Probar el flujo orquestador → verificador → playwright con una aplicación recién creada: comprobar arranque local, pruebas dentro de su proyecto, evidencias, retorno al verificador y comunicación de fallos al orquestador.
+7. Probar el flujo orquestador → verificador (Playwright integrado) con una aplicación recién creada: comprobar arranque local, pruebas dentro de su proyecto, evidencias, retorno al verificador y comunicación de fallos al orquestador.
 8. Actualizar `PLAN-AGENTES.md` y este README con comandos, versiones, resultados y límites observados.
 
 ## Límites y seguridad
 
 - No afirmar que un hook se ejecutó por encontrar una propuesta en un plan o un script en el repositorio.
 - No afirmar que un handoff funciona por tener metadatos `handoffs` en un agente; probarlo en la sesión real.
-- No instalar dependencias, herramientas o versiones globales sin aprobación explícita. Los agentes de instalación deben limitarse al proyecto y al stack aprobado.
+- No instalar dependencias, herramientas o versiones globales sin aprobación explícita. Los procedimientos de preparación deben limitarse al proyecto y al stack aprobado.
 - No guardar credenciales ni secretos en prompts, archivos de ejemplo o informes.
 - Cada aplicación vive en `proyectos/<slug>/`; sus documentos y datos no deben mezclarse con los de otra aplicación.

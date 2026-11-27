@@ -19,6 +19,8 @@ Este repositorio contiene agentes e instrucciones y puede alojar varias aplicaci
 - Confirmar SO y shell. En Windows cmd usar comandos compatibles y rutas entre comillas si contienen espacios; no asumir que activar una venv persiste entre terminales.
 
 ## Coordinación
+Solo orquestador-web invoca agentes: investigador-entorno, frontend, backend y verificador. Los especialistas no delegan. Verificador ejecuta Playwright directamente. Los hooks detectan requisitos; la preparación requiere aprobación explícita y sigue .github/hooks/procedimientos/.
+
 Para cada aplicación, el orquestador mantiene `proyectos/<slug>/docs/plan-aplicacion.md` con decisiones aprobadas, contrato de datos/API, propiedad de archivos y criterios de aceptación. El investigador mantiene `proyectos/<slug>/docs/entorno.md`; el verificador mantiene `proyectos/<slug>/docs/verificacion.md`. Crear estos documentos en la carpeta exclusiva del proyecto al comenzar una tarea real, sin inventar resultados.
 
 Cada delegación incluye objetivo, contexto, entradas/contrato, archivos autorizados, permisos, criterios de aceptación y verificaciones esperadas. Cada respuesta devuelve cambios, comandos ejecutados, resultados, riesgos y bloqueos. No asumir contexto compartido.
@@ -30,4 +32,4 @@ Antes de tareas Python, comprobar intérprete real y compatibilidad; usar `scrip
 
 Ejecutar pruebas/build solo cuando existan, después de cambios significativos. Registrar comandos, códigos de salida y verificaciones no realizadas. No confundir revisión textual con descubrimiento de agentes, ejecución de hooks o prueba de aplicación.
 
-Los handoffs requieren una acción del usuario y no retornan automáticamente. Si la herramienta de subagentes o la delegación anidada no están disponibles, usar los handoffs o devolver encargos al orquestador; nunca fingir una invocación.
+Los handoffs requieren una acción del usuario y no retornan automáticamente. Si la herramienta de subagentes no están disponibles, usar los handoffs o devolver encargos al orquestador; nunca fingir una invocación.

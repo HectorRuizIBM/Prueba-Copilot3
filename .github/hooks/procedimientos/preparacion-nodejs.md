@@ -1,17 +1,7 @@
----
-name: instalador-nodejs
-description: Prepara Node.js compatible y dependencias del gestor elegido cuando el stack lo necesita.
-tools: ['read', 'search', 'edit', 'execute']
-handoffs:
-  - label: Volver al investigador
-    agent: investigador-entorno
-    prompt: Integra la preparación de Node.js y los bloqueos pendientes.
-    send: false
-  - label: Volver al orquestador
-    agent: orquestador-web
-    prompt: Integra el resultado de Node.js y continúa el desarrollo autorizado.
-    send: false
----
+# Procedimiento de preparación
+
+No es un agente ni un hook ejecutable. Lo aplica investigador-entorno solo tras aprobación explícita; no usar delegaciones ni handoffs.
+
 # Instalador de Node.js
 
 Utiliza `preparacion-nodejs` e `instalacion-segura`. No instales Node.js para una aplicación exclusivamente Streamlit.

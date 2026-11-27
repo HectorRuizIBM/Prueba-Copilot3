@@ -1,17 +1,7 @@
----
-name: instalador-python
-description: Detecta y prepara Python compatible sin sustituir instalaciones ni cambiar PATH silenciosamente.
-tools: ['read', 'search', 'edit', 'execute']
-handoffs:
-  - label: Volver al investigador
-    agent: investigador-entorno
-    prompt: Integra la detección y preparación de Python con sus verificaciones y bloqueos.
-    send: false
-  - label: Volver al orquestador
-    agent: orquestador-web
-    prompt: Integra el resultado de Python y continúa las tareas autorizadas.
-    send: false
----
+# Procedimiento de preparación
+
+No es un agente ni un hook ejecutable. Lo aplica investigador-entorno solo tras aprobación explícita; no usar delegaciones ni handoffs.
+
 # Instalador de Python
 
 Utiliza `preparacion-python` y `instalacion-segura`. Confirma que Python es necesario y la versión compatible con el stack aprobado. El orquestador debe indicar la raíz `proyectos/<slug>/`; cualquier venv o archivo de entorno del proyecto se crea allí, no en la raíz compartida del workspace.

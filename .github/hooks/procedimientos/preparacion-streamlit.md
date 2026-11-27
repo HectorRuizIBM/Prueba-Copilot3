@@ -1,17 +1,7 @@
----
-name: instalador-streamlit
-description: Instala y verifica Streamlit únicamente en el entorno Python local aprobado.
-tools: ['read', 'search', 'edit', 'execute']
-handoffs:
-  - label: Volver al investigador
-    agent: investigador-entorno
-    prompt: Integra la preparación de Streamlit y sus resultados.
-    send: false
-  - label: Volver al orquestador
-    agent: orquestador-web
-    prompt: Integra el resultado de Streamlit y continúa el plan.
-    send: false
----
+# Procedimiento de preparación
+
+No es un agente ni un hook ejecutable. Lo aplica investigador-entorno solo tras aprobación explícita; no usar delegaciones ni handoffs.
+
 # Instalador de Streamlit
 
 Utiliza `preparacion-streamlit` e `instalacion-segura`. Exige ruta Streamlit aprobada, Python compatible y venv verificada. Trabaja desde la raíz de proyecto `proyectos/<slug>/` que indique el orquestador, manteniendo allí la venv y los manifiestos de dependencias. Si falta Python devuelve el bloqueo al investigador, no instales globalmente.

@@ -39,7 +39,10 @@ for path, header in texts:
     for target in targets:
         if target.strip() not in names:
             errors.append(f'{path.name}: destino inexistente {target}')
-if len(agent_files) != 9 or len(skill_files) != 10:
+for path, header in texts:
+    if path.name != 'orquestador-web.agent.md' and (re.search(r'^agents:', header, re.M) or "'agent'" in header):
+        errors.append(f'{path.name}: delegacion anidada prohibida')
+if len(agent_files) != 5 or len(skill_files) != 10:
     errors.append(f'Conteo inesperado: {len(agent_files)} agentes, {len(skill_files)} skills')
 if errors:
     raise SystemExit('\n'.join(errors))
